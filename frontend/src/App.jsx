@@ -3,15 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { userData } from "./context/user";
 
 const App = () => {
-
-const {user} = userData
-
-console.log(user);
-
-
   return (
     <>
       <BrowserRouter>

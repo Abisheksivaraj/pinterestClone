@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import thunder from "../assets/thunder.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserData } from "../context/userContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const {loginUser , btnLoading}= UserData();
+
+  const navigate = useNavigate()
+
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    loginUser(email, password,navigate);
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <div className="flex flex-col items-center rounded-lg justify-start border-2 w-[25rem] h-[35rem]">
+    <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex flex-col items-center rounded-lg border-2 w-[25rem] h-[35rem] p-6 bg-white shadow-lg">
         <div className="flex flex-col items-center mt-10">
           <div>
-            <img src={thunder} alt="" className="h-[5rem]" />
+            <img src={thunder} alt="Logo" className="h-[5rem]" />
           </div>
-          <div className="text-center">
+          <div className="text-center mt-4">
             <h1 className="text-black text-xl font-sans">Hey Buddy</h1>
             <span className="text-black text-2xl font-serif">
               Welcome To Thunderest
@@ -75,9 +80,12 @@ const Login = () => {
           </button>
         </form>
 
-        <div>
+        <div className="mt-4">
           <p>
-            Not on Thunderest yet? <Link to={"/register"}>Register</Link>
+            Not on Thunderest yet?{" "}
+            <Link to="/register" className="text-blue-500 hover:underline">
+              Register
+            </Link>
           </p>
         </div>
       </div>
