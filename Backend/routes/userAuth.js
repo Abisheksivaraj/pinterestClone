@@ -4,8 +4,9 @@ const {
   login,
   myProfile,
   userProfile,
-  followUser,
+  
   logOut,
+  followAndUnfollowUser,
 } = require("../controllers/userAuthController");
 const auth = require('../middlewares/auth')
 const route= express.Router();
@@ -21,6 +22,6 @@ route.get("/profile", auth, myProfile);
 
 route.get("/:id", auth,userProfile);
 
-route.post("/follow/:id", auth,followUser);
+route.post("/follow/:id", auth,followAndUnfollowUser);
 
 module.exports = route;

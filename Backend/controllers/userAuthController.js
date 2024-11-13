@@ -86,56 +86,41 @@ exports.userProfile = tryCatch(async (req, res) => {
   res.json(userProfile);
 });
 
-exports.followUser = tryCatch(async (req, res) => {
-  // Find the user to be followed by their ID in the URL parameter
-  const userToFollow = await User.findById(req.params.id);
+exports.followAndUnfollowUser = tryCatch(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const loggedInUser = await User.findById(req.user._id);
 
-  // Find the logged-in user (follower) by their ID stored in `req.follower`
-  const loggedInUser = await User.findById(req.follower._id);
-
-  // Check if the user to follow exists
-  if (!userToFollow) {
+  if (!user)
     return res.status(400).json({
-      message: "User ID not found",
+      message: "No user with this id",
     });
-  }
 
-  // Prevent users from following themselves
-  if (userToFollow._id.toString() === loggedInUser._id.toString()) {
+  if (user._id.toString() === loggedInUser._id.toString())
     return res.status(400).json({
-      message: "You can't follow yourself",
+      message: "you can't follow yourself",
     });
-  }
 
-  // Check if the logged-in user is already following the target user
-  const isFollowing = userToFollow.followers.includes(loggedInUser._id);
+  if (user.followers.includes(loggedInUser._id)) {
+    const indexFollowing = loggedInUser.following.indexOf(user._id);
+    const indexFollowers = user.followers.indexOf(loggedInUser._id);
 
-  if (isFollowing) {
-    // If already following, unfollow the user by removing IDs from respective lists
-    userToFollow.followers = userToFollow.followers.filter(
-      (followerId) => followerId.toString() !== loggedInUser._id.toString()
-    );
-    loggedInUser.following = loggedInUser.following.filter(
-      (followingId) => followingId.toString() !== userToFollow._id.toString()
-    );
+    loggedInUser.following.splice(indexFollowing, 1);
+    user.followers.splice(indexFollowers, 1);
 
-    // Save the changes
     await loggedInUser.save();
-    await userToFollow.save();
+    await user.save();
 
-    return res.json({
-      message: "User unfollowed",
+    res.json({
+      message: "User Unfollowed",
     });
   } else {
-    // If not following, follow the user by adding IDs to respective lists
-    userToFollow.followers.push(loggedInUser._id);
-    loggedInUser.following.push(userToFollow._id);
+    loggedInUser.following.push(user._id);
+    user.followers.push(loggedInUser._id);
 
-    // Save the changes
     await loggedInUser.save();
-    await userToFollow.save();
+    await user.save();
 
-    return res.json({
+    res.json({
       message: "User followed",
     });
   }

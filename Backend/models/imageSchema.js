@@ -12,7 +12,7 @@ const imageSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "registration", // Assuming this is the user model
       required: true,
     },
     image: {
@@ -33,6 +33,17 @@ const imageSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+      },
+    ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "registration", // Referencing the user who liked the image
+      },
+    ],
+    tags: [
+      {
+        type: String, // Tags can be simple strings
       },
     ],
   },

@@ -35,6 +35,20 @@ export const PinProvider = ({ children }) => {
     }
   }
 
+  const [isPin, setIsPin] = useState([]);
+
+  async function fetchLikedPins(userId){
+    setLoading(true);
+    try{
+      const {data} = await axios.get("/api/pin/getLikedPins"+userId)
+setIsPin(data)
+setLoading(false)
+    }catch(error){
+      console.log(error);
+      setLoading(false);
+    }
+  }
+
   async function updatePin(id, title, pin, setEdit) {
     try {
       const { data } = await axios.put("/api/pin/" + id, { title, pin });
@@ -52,6 +66,20 @@ export const PinProvider = ({ children }) => {
       toast.success(data.message);
       fetchPin(id);
       setComment("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+  async function likeUnlike(id, like, setLike) {
+    try {
+      const { data } = await axios.post("/api/pin/likeAndUnlike/" + id, {
+        like,
+      });
+
+      toast.success(data.message);
+      fetchPin(id);
+      setLike(like === "like" ? "unlike" : "like"); // Toggle the like state
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -112,16 +140,19 @@ export const PinProvider = ({ children }) => {
   return (
     <PinContext.Provider
       value={{
+        isPin,
         pins,
         loading,
         fetchPin,
         pin,
         updatePin,
         addComment,
+        likeUnlike,
         deleteComment,
         deletePin,
         addPin,
         fetchPins,
+        fetchLikedPins,
       }}
     >
       {children}

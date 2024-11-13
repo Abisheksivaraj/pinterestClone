@@ -150,3 +150,52 @@ exports.updateComment = tryCatch(async (req, res) => {
     message: "pin Updated",
   });
 });
+
+exports.toggleLike = tryCatch(async (req, res) => {
+  const userId = req.user._id; // Assuming user_id is available from the authenticated user
+  const pinId = req.params.id; // Pin ID from the URL parameter
+
+  // Find the pin by ID
+  const pin = await imageSchema.findById(pinId);
+
+  if (!pin) {
+    return res.status(404).json({ message: "Pin not found" });
+  }
+
+  // Check if the user has already liked the pin
+  const userHasLiked = pin.likes.includes(userId);
+
+  if (userHasLiked) {
+    // User has liked the pin, so we "unlike" it
+    pin.likes = pin.likes.filter(
+      (like) => like.toString() !== userId.toString()
+    ); // Remove the user from likes array
+    await pin.save();
+    return res
+      .status(200)
+      .json({ message: "Pin unliked successfully", likes: pin.likes });
+  } else {
+    // User has not liked the pin, so we "like" it
+    pin.likes.push(userId); // Add the user to likes array
+    await pin.save();
+    return res
+      .status(200)
+      .json({  message: "Pin liked successfully", likes: pin.likes });
+  }
+});
+
+
+exports.getLikedImages = tryCatch(async (req, res) => {
+  const userId = req.params.userId; // Get the user ID from the request parameters
+
+  const likedImages = await imageSchema
+    .find({ likes: userId }) // Find images where the likes array includes the user ID
+    .populate("owner", "-password"); // Populate the owner field, excluding the password field
+
+  res.json(likedImages); // Return the liked images
+});
+
+
+
+
+

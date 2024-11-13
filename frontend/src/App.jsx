@@ -9,6 +9,8 @@ import PinPage from "./pages/PinPage";
 import Create from "./pages/Create";
 import Account from "./pages/Account";
 import UserProfile from "./pages/UserProfile";
+import Like from "./pages/Like";
+import Tags from "./pages/Tags";
 
 const App = () => {
   const { loading, isAuth, user } = UserData();
@@ -30,6 +32,8 @@ const App = () => {
               element={isAuth ? <UserProfile user={user} /> : <Login />}
             />
             <Route path="/create" element={isAuth ? <Create /> : <Login />} />
+            <Route path="/like" element={isAuth ? <Like /> : <Login />} />
+            <Route path="/tags" element={isAuth ? <Tags /> : <Login />} />
             <Route
               path="/pin/:id"
               element={isAuth ? <PinPage user={user} /> : <Login />}
