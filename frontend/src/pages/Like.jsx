@@ -23,23 +23,25 @@ const Like = () => {
   }
 
   return (
-    <div>
-      <h2>Liked Pins</h2>
+    <div className="liked-pins-container">
+      <h2 className="text-center text-3xl font-serif font-semiBold mt-4">Liked Pins</h2>
       {loading ? (
         <p>Loading...</p>
       ) : likedPins && likedPins.length > 0 ? (
-        likedPins.map((pin) => {
-          console.log("Image URL:", pin.image);
-          console.log("Title:", pin.title);
-          console.log("Pin:", pin);
+        <div className="flex items-center gap-5 p-5">
+          {likedPins.map((pin) => {
+            console.log("Image URL:", pin.image);
+            console.log("Title:", pin.title);
+            console.log("Pin:", pin);
 
-          return (
-            <div key={pin._id} className="pin-card">
-              <img src={pin.image} alt={pin.title} className="pin-image" />
-              <p>{pin.title}</p>
-            </div>
-          );
-        })
+            return (
+              <div key={pin._id} className="pin-card">
+                <img src={pin.image} alt={pin.title} className="pin-image" />
+                <p>{pin.title}</p>
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <p>No liked pins found.</p>
       )}
