@@ -1,29 +1,37 @@
 import React from "react";
-import thunder from "../assets/thunder.png";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ user }) => {
   return (
-    <nav className="flex items-center justify-between p-4 bg-white text-white shadow-lg border-2 border-gray-200">
-      {/* Logo and Logoname */}
-      <div className="flex items-center">
-        <img src={thunder} alt="Logo" className="h-8 w-8 mr-2" />{" "}
-        <span className="font-bold text-lg text-[red]">Thunderest</span>{" "}
-      </div>
+    <div>
+      <div className="bg-white shadow-sm">
+        <div className="mx-auto px-4 py-2 flex justify-between items-center">
+          <Link to="/" className="flex items-center mr-5">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/600px-Pinterest-logo.png"
+              alt=""
+              className="h-6 md:mr-2"
+            />
+            <span className="text-red-600 text-xl font-bold">Pinterest</span>
+          </Link>
 
-      {/* Menu Items */}
-      <div className="flex space-x-10 font-medium text-[#ea6b6b] mr-20">
-        <Link to="/" className="hover:underline">
-          Home
-        </Link>
-        <Link to="/create" className="hover:underline">
-          Create
-        </Link>
-        <Link to="/profile" className="hover:underline">
-          Profile
-        </Link>
+          <div className="flex items-center space-x-4 w-[200px]">
+            <Link to="/" className="text-gray-700 hover:text-gray-900">
+              Home
+            </Link>
+            <Link to="/create" className="text-gray-700 hover:text-gray-900">
+              Create
+            </Link>
+            <Link
+              to="/account"
+              className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xl text-gray-700"
+            >
+              {user.name.slice(0, 1)}
+            </Link>
+          </div>
+        </div>
       </div>
-    </nav>
+    </div>
   );
 };
 
