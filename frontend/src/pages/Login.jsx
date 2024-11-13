@@ -1,23 +1,59 @@
 import React, { useState } from "react";
-import thunder from "../assets/thunder.png";
-import { Link, useNavigate } from "react-router-dom";
-import { UserData } from "../context/userContext";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import thunder from "../assets/thunder.png"
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const {loginUser , btnLoading}= UserData();
+  const handleChange = (event) => {
+    setUser({ ...user, [event.target.name]: event.target.value });
+  };
 
-  const navigate = useNavigate()
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-  const submitHandler = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    loginUser(email, password,navigate);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/userLogin",
+        {
+          email: user.email,
+          password: user.password,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+
+        // Save token to local storage (or another secure method)
+        localStorage.setItem("token", response.data.token);
+
+        // Redirect to dashboard or another protected route
+        navigate("/");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("An error occurred while logging in.");
+      }
+    }
   };
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-100">
+      <Toaster />
       <div className="flex flex-col items-center rounded-lg border-2 w-[25rem] h-[35rem] p-6 bg-white shadow-lg">
         <div className="flex flex-col items-center mt-10">
           <div>
@@ -31,7 +67,7 @@ const Login = () => {
           </div>
         </div>
         <form
-          onSubmit={submitHandler}
+          onSubmit={handleSubmit}
           className="flex flex-col items-center space-y-4 w-[20rem] p-6"
         >
           <div className="w-full">
@@ -45,15 +81,15 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={user.email}
+              onChange={handleChange}
               placeholder="Enter your email"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          <div className="w-full">
+          <div className="w-full relative">
             <label
               htmlFor="password"
               className="block text-gray-700 font-semibold mb-1"
@@ -64,12 +100,18 @@ const Login = () => {
               type="password"
               id="password"
               name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={user.password}
+              onChange={handleChange}
               placeholder="Enter your password"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
+            <div
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer top-[1.7rem] text-gray-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
           </div>
 
           <button

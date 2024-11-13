@@ -54,14 +54,15 @@ exports.login = tryCatch(async (req, res) => {
       message: "Wrong password",
     });
 
-  generateToken(loginId._id, res);
+  const token = generateToken(loginId._id, res);
 
   res.json({
     loginId,
+    auth: true,
+    token: token,
     message: "User logged in successfully",
   });
 });
-
 
 exports.myProfile = async (req, res) => {
   try {
@@ -71,7 +72,6 @@ exports.myProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.userProfile = tryCatch(async (req, res) => {
   // Fetch user by ID from the URL parameter
@@ -85,7 +85,6 @@ exports.userProfile = tryCatch(async (req, res) => {
   // Respond with user data
   res.json(userProfile);
 });
-
 
 exports.followUser = tryCatch(async (req, res) => {
   // Find the user to be followed by their ID in the URL parameter
@@ -142,13 +141,9 @@ exports.followUser = tryCatch(async (req, res) => {
   }
 });
 
-
-
-exports.logOut = tryCatch(async(req,res)=>{
-  res.cookie("token","",{days:0});
+exports.logOut = tryCatch(async (req, res) => {
+  res.cookie("token", "", { days: 0 });
   res.json({
-    message:"logged Out Successfully"
-  })
-})
-
-
+    message: "logged Out Successfully",
+  });
+});
