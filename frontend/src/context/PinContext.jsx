@@ -10,7 +10,7 @@ export const PinProvider = ({ children }) => {
 
   async function fetchPins() {
     try {
-      const { data } = await axios.get("/api/pin/allImage");
+      const { data } = await axios.get("/api/pin/all");
 
       setPins(data);
       setLoading(false);
@@ -25,7 +25,7 @@ export const PinProvider = ({ children }) => {
   async function fetchPin(id) {
     setLoading(true);
     try {
-      const { data } = await axios.get(`/api/pin/getSingleImage/${id}`);
+      const { data } = await axios.get("/api/pin/" + id);
 
       setPin(data);
       setLoading(false);
@@ -37,10 +37,7 @@ export const PinProvider = ({ children }) => {
 
   async function updatePin(id, title, pin, setEdit) {
     try {
-      const { data } = await axios.put(`/api/pin/updateImage/${id}`, {
-        title,
-        pin,
-      });
+      const { data } = await axios.put("/api/pin/" + id, { title, pin });
       toast.success(data.message);
       fetchPin(id);
       setEdit(false);
@@ -51,7 +48,7 @@ export const PinProvider = ({ children }) => {
 
   async function addComment(id, comment, setComment) {
     try {
-      const { data } = await axios.post(`/api/pin/comment/${id}`, { comment });
+      const { data } = await axios.post("/api/pin/comment/" + id, { comment });
       toast.success(data.message);
       fetchPin(id);
       setComment("");
@@ -63,7 +60,7 @@ export const PinProvider = ({ children }) => {
   async function deleteComment(id, commentId) {
     try {
       const { data } = await axios.delete(
-        `/api/pin/deleteComment/${id}?commentId=${commentId}`
+        `/api/pin/comment/${id}?commentId=${commentId}`
       );
       toast.success(data.message);
       fetchPin(id);
@@ -75,7 +72,7 @@ export const PinProvider = ({ children }) => {
   async function deletePin(id, navigate) {
     setLoading(true);
     try {
-      const { data } = await axios.delete(`/api/pin/deleteImage/${id}`);
+      const { data } = await axios.delete(`/api/pin/${id}`);
       toast.success(data.message);
       navigate("/");
       setLoading(false);
@@ -95,7 +92,7 @@ export const PinProvider = ({ children }) => {
     navigate
   ) {
     try {
-      const { data } = await axios.post("/api/pin/newImage", formData);
+      const { data } = await axios.post("/api/pin/new", formData);
 
       toast.success(data.message);
       setFile([]);

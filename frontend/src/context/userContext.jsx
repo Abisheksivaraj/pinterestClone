@@ -33,7 +33,7 @@ export const UserProvider = ({ children }) => {
   async function loginUser(email, password, navigate, fetchPins) {
     setBtnLoading(true);
     try {
-      const { data } = await axios.post("/api/user/userLogin", { email, password });
+      const { data } = await axios.post("/api/user/login", { email, password });
 
       toast.success(data.message);
       setUser(data.user);
@@ -64,7 +64,7 @@ export const UserProvider = ({ children }) => {
 
   async function followUser(id, fetchUser) {
     try {
-      const { data } = await axios.post(`/api/user/follow/${id}`);
+      const { data } = await axios.post("/api/user/follow/" + id);
 
       toast.success(data.message);
       fetchUser();

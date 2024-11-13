@@ -4,18 +4,18 @@ const route = express.Router();
 const auth = require("../middlewares/auth");
 const uploadFile = require("../middlewares/multer");
 
-route.post("/newImage", auth, uploadFile, createImage);
+route.post("/new", auth, uploadFile, createImage);
 
-route.get("/allImage",auth,getAllImages)
+route.get("/all",auth,getAllImages)
 
-route.get("/getSingleImage/:id",auth,getSingleImages)
+route.get("/:id", auth, getSingleImages);
 
-route.put("/updateImage/:id", auth, updateComment);
+route.put(":id", auth, updateComment);
 
-route.delete("/deleteImage/:id",auth,deleteImage)
+route.delete(":id",auth,deleteImage)
 
 route.post("/comment/:id", auth, commentOnImage);
 
-route.delete("/deleteComment/:id", auth, deleteComment)
+route.delete("/:id", auth, deleteComment)
 
 module.exports = route;

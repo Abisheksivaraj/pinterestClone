@@ -12,6 +12,6 @@ app.use(express.json());
 
 app.use("/api/user", registerUser);
 
-app.use("/api/pin",images);
+app.use("/api/pin/",images);
 
 module.exports = app;
