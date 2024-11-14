@@ -11,7 +11,6 @@ export const PinProvider = ({ children }) => {
   async function fetchPins() {
     try {
       const { data } = await axios.get("/api/pin/all");
-
       setPins(data);
       setLoading(false);
     } catch (error) {
@@ -26,7 +25,6 @@ export const PinProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await axios.get("/api/pin/" + id);
-
       setPin(data);
       setLoading(false);
     } catch (error) {
@@ -37,13 +35,13 @@ export const PinProvider = ({ children }) => {
 
   const [isPin, setIsPin] = useState([]);
 
-  async function fetchLikedPins(userId){
+  async function fetchLikedPins(userId) {
     setLoading(true);
-    try{
-      const {data} = await axios.get("/api/pin/getLikedPins"+userId)
-setIsPin(data)
-setLoading(false)
-    }catch(error){
+    try {
+      const { data } = await axios.get("/api/pin/getLikedPins" + userId);
+      setIsPin(data);
+      setLoading(false);
+    } catch (error) {
       console.log(error);
       setLoading(false);
     }
@@ -71,15 +69,25 @@ setLoading(false)
     }
   }
 
+  async function addTags(id, tags, setTags) {
+    try {
+      const { data } = await axios.post(`/api/pin/tags/${id}`, { tags });
+      toast.success(data.message);
+      
+      setTags("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
   async function likeUnlike(id, like, setLike) {
     try {
       const { data } = await axios.post("/api/pin/likeAndUnlike/" + id, {
         like,
       });
-
       toast.success(data.message);
       fetchPin(id);
-      setLike(like === "like" ? "unlike" : "like"); // Toggle the like state
+      setLike(like === "like" ? "unlike" : "like");
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -121,7 +129,6 @@ setLoading(false)
   ) {
     try {
       const { data } = await axios.post("/api/pin/new", formData);
-
       toast.success(data.message);
       setFile([]);
       setFilePrev("");
@@ -153,6 +160,7 @@ setLoading(false)
         addPin,
         fetchPins,
         fetchLikedPins,
+        addTags,
       }}
     >
       {children}

@@ -3,34 +3,41 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext";
 import { LoadingAnimation } from "../components/Loading";
 import { PinData } from "../context/PinContext";
+import thunder from "../assets/thunder.png";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { registerUser, btnLoading } = UserData();
   const navigate = useNavigate();
-
   const { fetchPins } = PinData();
 
   const submitHandler = (e) => {
     e.preventDefault();
     registerUser(name, email, password, navigate, fetchPins);
   };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-center mb-4">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/600px-Pinterest-logo.png"
-            alt="Pinterest"
-            className="h-12"
-          />
+          <img src={thunder} alt="Pinterest" className="h-[4rem] w-[4rem]" />
         </div>
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Register to pinterest
-        </h2>
+        <div>
+          <h3 className="text-center text-xl">Hey Buddy</h3>
+          <h2 className="text-2xl font-bold text-center mb-6">
+            Welcome to Thunderest
+          </h2>
+        </div>
+
         <form onSubmit={submitHandler}>
           <div className="mb-4">
             <label
@@ -64,7 +71,7 @@ const Register = () => {
               required
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
@@ -72,13 +79,20 @@ const Register = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               className="common-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-[2.1rem] text-gray-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           <button type="submit" className="common-btn" disabled={btnLoading}>

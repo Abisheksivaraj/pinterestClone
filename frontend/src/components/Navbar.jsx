@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import thunder from "../assets/thunder.png"
 
 const Navbar = ({ user }) => {
   return (
@@ -7,12 +8,10 @@ const Navbar = ({ user }) => {
       <div className="mx-auto px-4 py-3 flex justify-between items-center max-w-7xl">
         {/* Logo and Title */}
         <Link to="/" className="flex items-center gap-2">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/600px-Pinterest-logo.png"
-            alt="Pinterest Logo"
-            className="h-6"
-          />
-          <span className="text-red-600 text-xl font-bold">Pinterest</span>
+          <img src={thunder} alt="Pinterest Logo" className="h-10 w-10" />
+          <span className="text-[#FF5349] text-xl font-serif font-bold">
+            Thunderest
+          </span>
         </Link>
 
         {/* Navigation Links */}

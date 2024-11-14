@@ -197,5 +197,45 @@ exports.getLikedImages = tryCatch(async (req, res) => {
 
 
 
+exports.toggleTag = tryCatch(async (req, res) => {
+  const userId = req.user._id; // Assuming user_id is available from the authenticated user
+  const pinId = req.params.id; // Pin ID from the URL parameter
+  const tag = req.body.tag; // The tag to be added or removed
+
+  // Validate if tag is provided
+  if (!tag) {
+    return res.status(400).json({ message: "Tag is required" });
+  }
+
+  // Find the pin by ID
+  const pin = await imageSchema.findById(pinId);
+
+  if (!pin) {
+    return res.status(404).json({ message: "Pin not found" });
+  }
+
+  // Check if the tag already exists on the pin
+  const tagIndex = pin.tags.indexOf(tag);
+
+  if (tagIndex !== -1) {
+    // Tag already exists, so we remove it
+    pin.tags.splice(tagIndex, 1); // Remove the tag from the tags array
+    await pin.save();
+    return res
+      .status(200)
+      .json({ message: "Tag removed successfully", tags: pin.tags });
+  } else {
+    // Tag does not exist, so we add it
+    pin.tags.push(tag); // Add the tag to the tags array
+    await pin.save();
+    return res
+      .status(200)
+      .json({ message: "Tag added successfully", tags: pin.tags });
+  }
+});
+
+
+
+
 
 
