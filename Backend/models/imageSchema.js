@@ -38,12 +38,12 @@ const imageSchema = new mongoose.Schema(
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "registration", // Referencing the user who liked the image
+        ref: "registration", 
       },
     ],
     tags: [
       {
-        type: String, // Tags can be simple strings
+        type: String, 
       },
     ],
   },

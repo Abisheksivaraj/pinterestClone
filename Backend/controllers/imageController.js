@@ -1,33 +1,30 @@
 const imageSchema = require("../models/imageSchema");
-const cloudinary = require("cloudinary").v2; // Cloudinary configuration
+const cloudinary = require("cloudinary").v2;
 const tryCatch = require("../utils/TryCatchError");
-const urlData = require("../utils/url"); // Utility to generate URL
+const urlData = require("../utils/url");
 
 exports.createImage = tryCatch(async (req, res) => {
-  const { title, pin } = req.body; // Extract title and pin from request body
-  const file = req.file; // Get the uploaded file from the request
+  const { title, pin } = req.body;
+  const file = req.file;
 
   if (!file) {
-    return res.status(400).json({ error: "No file uploaded" }); // Check if file exists
+    return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const fileUrl = urlData(file); // Generate URL from the uploaded file
+  const fileUrl = urlData(file);
 
-  // Upload the image to Cloudinary
   const uploadedImage = await cloudinary.uploader.upload(fileUrl.content);
 
-  // Save the image data in the database
   await imageSchema.create({
     title,
     pin,
     image: {
-      id: uploadedImage.public_id, // Cloudinary public ID
-      url: uploadedImage.secure_url, // Cloudinary secure URL
+      id: uploadedImage.public_id,
+      url: uploadedImage.secure_url,
     },
-    owner: req.user._id, // Save the user ID who uploaded the image
+    owner: req.user._id,
   });
 
-  // Respond with success message
   res.json({
     message: "Pin created successfully",
   });
@@ -70,40 +67,33 @@ exports.deleteComment = tryCatch(async (req, res) => {
   const { id } = req.params;
   const { commentId } = req.query;
 
-  // Find the pin (or image) by ID
   const pin = await imageSchema.findById(id);
   if (!pin) {
     return res.status(400).json({ message: "Pin not found" });
   }
 
-  // Check if the comment ID was provided
   if (!commentId) {
     return res.status(400).json({ message: "Please provide a comment ID" });
   }
 
-  // Find the index of the comment
   const commentIndex = pin.comments.findIndex(
     (comment) => comment._id.toString() === commentId
   );
 
-  // If comment is not found, return an error
   if (commentIndex === -1) {
     return res.status(404).json({ message: "Comment not found" });
   }
 
   const comment = pin.comments[commentIndex];
 
-  // Check if the current user is the owner of the comment
   if (comment.user.toString() !== req.user._id.toString()) {
     return res
       .status(403)
       .json({ message: "You do not have permission to delete this comment" });
   }
 
-  // Remove the comment from the array
   pin.comments.splice(commentIndex, 1);
 
-  // Save the changes to the database
   await pin.save();
 
   return res.json({ message: "Comment deleted successfully" });
@@ -116,15 +106,12 @@ exports.deleteImage = tryCatch(async (req, res) => {
     return res.status(400).json({ message: "Pin not found" });
   }
 
-  // Check if the user is authorized to delete the image
   if (pin.owner.toString() !== req.user._id.toString()) {
     return res.status(403).json({ message: "Unauthorized" });
   }
 
-  // Delete the image from Cloudinary
   await cloudinary.uploader.destroy(pin.image.id);
 
-  // Delete the pin from the database
   await pin.deleteOne();
 
   return res.json({ message: "Pin deleted successfully" });
@@ -152,90 +139,72 @@ exports.updateComment = tryCatch(async (req, res) => {
 });
 
 exports.toggleLike = tryCatch(async (req, res) => {
-  const userId = req.user._id; // Assuming user_id is available from the authenticated user
-  const pinId = req.params.id; // Pin ID from the URL parameter
+  const userId = req.user._id;
+  const pinId = req.params.id;
 
-  // Find the pin by ID
   const pin = await imageSchema.findById(pinId);
 
   if (!pin) {
     return res.status(404).json({ message: "Pin not found" });
   }
 
-  // Check if the user has already liked the pin
   const userHasLiked = pin.likes.includes(userId);
 
   if (userHasLiked) {
-    // User has liked the pin, so we "unlike" it
     pin.likes = pin.likes.filter(
       (like) => like.toString() !== userId.toString()
-    ); // Remove the user from likes array
+    );
     await pin.save();
     return res
       .status(200)
       .json({ message: "Pin unliked successfully", likes: pin.likes });
   } else {
-    // User has not liked the pin, so we "like" it
-    pin.likes.push(userId); // Add the user to likes array
+    pin.likes.push(userId);
     await pin.save();
     return res
       .status(200)
-      .json({  message: "Pin liked successfully", likes: pin.likes });
+      .json({ message: "Pin liked successfully", likes: pin.likes });
   }
 });
 
-
 exports.getLikedImages = tryCatch(async (req, res) => {
-  const userId = req.params.userId; // Get the user ID from the request parameters
+  const userId = req.params.userId;
 
   const likedImages = await imageSchema
-    .find({ likes: userId }) // Find images where the likes array includes the user ID
-    .populate("owner", "-password"); // Populate the owner field, excluding the password field
+    .find({ likes: userId })
+    .populate("owner", "-password");
 
-  res.json(likedImages); // Return the liked images
+  res.json(likedImages);
 });
 
-
-
 exports.toggleTag = tryCatch(async (req, res) => {
-  const userId = req.user._id; // Assuming user_id is available from the authenticated user
-  const pinId = req.params.id; // Pin ID from the URL parameter
-  const tag = req.body.tag; // The tag to be added or removed
+  const userId = req.user._id;
+  const pinId = req.params.id;
+  const tag = req.body.tag;
 
-  // Validate if tag is provided
   if (!tag) {
     return res.status(400).json({ message: "Tag is required" });
   }
 
-  // Find the pin by ID
   const pin = await imageSchema.findById(pinId);
 
   if (!pin) {
     return res.status(404).json({ message: "Pin not found" });
   }
 
-  // Check if the tag already exists on the pin
   const tagIndex = pin.tags.indexOf(tag);
 
   if (tagIndex !== -1) {
-    // Tag already exists, so we remove it
-    pin.tags.splice(tagIndex, 1); // Remove the tag from the tags array
+    pin.tags.splice(tagIndex, 1);
     await pin.save();
     return res
       .status(200)
       .json({ message: "Tag removed successfully", tags: pin.tags });
   } else {
-    // Tag does not exist, so we add it
-    pin.tags.push(tag); // Add the tag to the tags array
+    pin.tags.push(tag);
     await pin.save();
     return res
       .status(200)
       .json({ message: "Tag added successfully", tags: pin.tags });
   }
 });
-
-
-
-
-
-

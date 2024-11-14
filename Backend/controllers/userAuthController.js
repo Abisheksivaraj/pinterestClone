@@ -5,10 +5,8 @@ const { generateToken } = require("../utils/jwtToken.js");
 
 exports.register = tryCatch(async (req, res) => {
   try {
-    // Corrected destructuring syntax
     const { name, email, password } = req.body;
 
-    // Check if the user already exists
     let existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -17,10 +15,8 @@ exports.register = tryCatch(async (req, res) => {
       });
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user with the hashed password
     const newUser = new User({ name, email, password: hashedPassword });
 
     generateToken(newUser._id, res);
@@ -74,15 +70,12 @@ exports.myProfile = async (req, res) => {
 };
 
 exports.userProfile = tryCatch(async (req, res) => {
-  // Fetch user by ID from the URL parameter
   const userProfile = await User.findById(req.params.id).select("-password");
 
-  // Check if the user exists
   if (!userProfile) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // Respond with user data
   res.json(userProfile);
 });
 

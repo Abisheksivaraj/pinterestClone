@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Make sure to import axios
+import axios from "axios";
 
 const Like = () => {
   const [likedPins, setLikedPins] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = "67349eacfa9f020c27994b31"; // Replace with the actual userId
+    const userId = "67349eacfa9f020c27994b31"; 
     fetchLikedPins(userId);
   }, []);
 

@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import thunder from "../assets/thunder.png"
+import thunder from "../assets/thunder.png";
 
 const Navbar = ({ user }) => {
   return (
     <div className="bg-white shadow-sm">
       <div className="mx-auto px-4 py-3 flex justify-between items-center max-w-7xl">
-        {/* Logo and Title */}
         <Link to="/" className="flex items-center gap-2">
           <img src={thunder} alt="Pinterest Logo" className="h-10 w-10" />
           <span className="text-[#FF5349] text-xl font-serif font-bold">
@@ -14,7 +13,6 @@ const Navbar = ({ user }) => {
           </span>
         </Link>
 
-        {/* Navigation Links */}
         <div className="flex items-center gap-6">
           <Link to="/" className="text-gray-700 hover:text-gray-900 transition">
             Home
@@ -38,7 +36,6 @@ const Navbar = ({ user }) => {
             Tags
           </Link>
 
-          {/* User Profile Icon */}
           <Link
             to="/account"
             className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-xl text-gray-700 hover:bg-gray-400 transition"

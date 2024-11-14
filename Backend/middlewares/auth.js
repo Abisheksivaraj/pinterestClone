@@ -3,7 +3,7 @@ const User = require("../models/registerSchema");
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers.authorization.split(" ")[1]; // Adjust as needed for your token location
+    const token = req.cookies.token || req.headers.authorization.split(" ")[1];
 
     if (!token) {
       return res.status(403).json({ message: "Login required" });
@@ -16,7 +16,7 @@ const auth = async (req, res, next) => {
       return res.status(403).json({ message: "Invalid token: User not found" });
     }
 
-    req.user = user; // Attach the user object to `req.user`
+    req.user = user;
     next();
   } catch (error) {
     return res.status(500).json({ message: error.message });
